@@ -1,3 +1,6 @@
+#ifndef PARSER_H
+#define PARSER_H
+
 #include "../tokens/Token.h"
 #include "../scanner/Scanner.h"
 #include <vector>
@@ -11,3 +14,5 @@ public:
   void parseHtml();
 
 };
+
+#endif
