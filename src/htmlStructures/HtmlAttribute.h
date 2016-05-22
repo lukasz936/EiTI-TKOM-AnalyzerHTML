@@ -9,6 +9,8 @@ public:
   HtmlAttribute();
   HtmlAttribute(std::string, std::string);
   ~HtmlAttribute();
+  std::string getName();
+  std::string getValue();
 };
 
 #endif

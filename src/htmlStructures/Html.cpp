@@ -13,3 +13,12 @@ Html::~Html(){
   delete this->doctype;
   delete this->element;
 }
+
+HtmlDoctype* Html::getDoctype()
+{
+  return this->doctype;
+}
+HtmlElement* Html::getElement()
+{
+  return this->element;
+}

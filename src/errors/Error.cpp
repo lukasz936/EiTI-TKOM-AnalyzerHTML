@@ -25,5 +25,11 @@ void Error::show(ErrorType errorType)
     case SCANNER_INVALID_SIGN:
     cout<<"Blad analizy leksykalnej. Niewlasciwy znak."<<endl;
     break;
+    case PARSER_INVALID_TOKEN_HTML:
+    cout<<"Blad analizy skladniowej. Niewlasciwy atom leksykalny podczas parsowania obiektu typu Html."<<endl;
+    break;
+    case PARSER_INVALID_TOKEN_ELEMENT:
+    cout<<"Blad analizy skladniowej. Niewlasciwy atom leksykalny podczas parsowania obiektu typu Element."<<endl;
+    break;
   }
 }

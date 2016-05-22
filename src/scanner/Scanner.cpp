@@ -114,9 +114,12 @@ Token* Scanner::nextSymbol(){
   }
   if(currentChar=='=')
   {
-    token = new Token(Equals_Sign);
-    tokens.push_back(token);
-    return token;
+    if(!isText())
+    {
+      token = new Token(Equals_Sign);
+      tokens.push_back(token);
+      return token;
+    }
   }
   if(currentChar=='-')
   {
@@ -159,10 +162,30 @@ bool Scanner::isText(){
   switch(currentChar)
   {
     case ' ':return false;
-    case '=':return false;
     case '<':return false;
     case '>':return false;
     case '"':return false;
+    case '=':
+    {
+      int i=0;
+      nextChar();
+      while(isspace(currentChar)){
+        nextChar();
+        i++;
+      }
+      if(currentChar!='"')
+      {
+        currentPosition=currentPosition-i-1;
+        currentChar='=';
+        return true;
+      }
+      else
+      {
+        currentPosition=currentPosition-i-1;
+        currentChar='=';
+        return false;
+      }
+    }
     case '/':
     {
       nextChar();

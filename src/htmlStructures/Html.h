@@ -10,5 +10,7 @@ public:
   Html();
   Html(HtmlDoctype*,HtmlElement*);
   ~Html();
+  HtmlDoctype* getDoctype();
+  HtmlElement* getElement();
 };
 #endif

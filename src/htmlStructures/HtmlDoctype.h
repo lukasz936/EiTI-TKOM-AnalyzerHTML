@@ -3,12 +3,14 @@
 #include <vector>
 #include <iostream>
 class HtmlDoctype{
-  std::vector<std::string>* texts;
-  std::vector<std::string>* values;
+  std::vector<std::string> texts;
+  std::vector<std::string> values;
 public:
   HtmlDoctype();
-  HtmlDoctype(std::vector<std::string>*,std::vector<std::string>*);
+  HtmlDoctype(std::vector<std::string>,std::vector<std::string>);
   ~HtmlDoctype();
+  std::vector<std::string> getTexts();
+  std::vector<std::string> getValues();
 };
 
 #endif

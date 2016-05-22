@@ -12,3 +12,13 @@ HtmlAttribute::HtmlAttribute(std::string name, std::string value){
 HtmlAttribute::~HtmlAttribute(){
 
 }
+
+std::string HtmlAttribute::getName()
+{
+  return this->name;
+}
+
+std::string HtmlAttribute::getValue()
+{
+  return this->value;
+}

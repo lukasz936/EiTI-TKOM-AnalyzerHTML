@@ -13,11 +13,17 @@ AnalyzerHTML::AnalyzerHTML(int argc, char** argv){
     return;
   }
   FileReader fileReader;
-  Scanner* scanner = new Scanner(fileReader.start(argv[1]));
-  Parser parser(scanner);
+  FileCreator fileCreator;
+  CodeGenerator codeGenerator;
+  Scanner scanner(fileReader.start(argv[1]));
+  Parser parser(&scanner);
   parser.start();
-  display(scanner->getPointerOnTokens());
-  delete scanner;
+  codeGenerator.start(&parser);
+  fileCreator.start(codeGenerator.getStringJSON());
+  //while(scanner->nextSymbol()!=NULL);
+  //display(scanner->getPointerOnTokens());
+  //cout<<scanner->getPointerOnTokens()->size();
+
 
 }
 

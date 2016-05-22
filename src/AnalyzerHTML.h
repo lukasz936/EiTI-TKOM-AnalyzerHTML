@@ -5,6 +5,8 @@
 #include "fileReader/FileReader.h"
 #include "scanner/Scanner.h"
 #include "parser/Parser.h"
+#include "codeGenerator/CodeGenerator.h"
+#include "fileCreator/FileCreator.h"
 
 class AnalyzerHTML{
   Error error;
