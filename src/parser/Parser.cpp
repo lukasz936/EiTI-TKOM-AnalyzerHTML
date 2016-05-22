@@ -137,10 +137,9 @@ HtmlElement* Parser::parseElement()
       else
         text+=(token->getContent()+" ");
     }
-  //  std::cout<<text<<endl;
-  text="dupa ";
+
   if(text.at(text.size()-1)==' ')
-  cout<<"dupka";
+    text.erase(text.end()-1,text.end());
     return new HtmlElement(name,attributes,text,"",elements);
   }
 
