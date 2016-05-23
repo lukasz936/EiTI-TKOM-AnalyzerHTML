@@ -11,6 +11,7 @@ FileReader::FileReader(){
 FileReader::~FileReader(){
 }
 
+//glowna funkcja modulu obslugi wejscia zwracajaca obiektu typu string z zawartoscia pliku
 string FileReader::start(char* fileDirectory){
   ifstream file;
   string inputSource = "";

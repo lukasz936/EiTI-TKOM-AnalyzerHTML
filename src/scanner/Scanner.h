@@ -15,7 +15,7 @@ class Scanner{
   int previousPosition;
   std::string text;
   char currentChar;
-  void nextChar();
+  bool nextChar();
   bool isText();
   bool isValue();
 

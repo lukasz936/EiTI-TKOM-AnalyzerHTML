@@ -17,7 +17,6 @@ public:
   Html* parseHtml();
   HtmlElement* parseElement();
   HtmlAttribute* parseAttribute();
-  void displaySymbol(Token*);
   Html* getHtml();
   std::vector<HtmlElement*> searchElements(HtmlElement*, std::string,std::string,std::string);
 

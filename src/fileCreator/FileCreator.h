@@ -6,7 +6,6 @@
 #include <iostream>
 
 class FileCreator{
- Error error;
 public:
   FileCreator();
   ~FileCreator();

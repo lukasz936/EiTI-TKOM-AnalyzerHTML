@@ -22,20 +22,27 @@ Scanner::~Scanner(){
   }
 }
 
-void Scanner::nextChar(){
+//funkcja pobierajaca kolejny znak z ciagu wejsciowego
+bool Scanner::nextChar(){
   currentPosition++;
+  if(currentPosition==inputSource.size())
+  return false;
   currentChar = inputSource.at(currentPosition);
+  return true;
 }
 
+//funkcja zwracajaca kolejny atom leksykalny (token)
 Token* Scanner::nextSymbol(){
   Token* token;
-  if(currentPosition+1==inputSource.size())
+  if(currentPosition+1==inputSource.size()) //koniec ciagu znakow
+    return NULL;
+  if(!nextChar())
   return NULL;
-  nextChar();
-  while(isspace(currentChar)){
-    nextChar();
+  while(isspace(currentChar)){    //wyczyszczenie bialych znakow
+    if(!nextChar())
+    return NULL;
   }
-  if(currentChar=='"') {
+  if(currentChar=='"') {  //mozliwy token: Value
     text="";
     nextChar();
     while(isValue())
@@ -47,16 +54,16 @@ Token* Scanner::nextSymbol(){
     tokens.push_back(token);
     return token;
   }
-  if(currentChar=='<')
+  if(currentChar=='<')  //mozliwe tokeny: Open_Start_Tag, Open_End_Tag, Open_Comment_Tag, Open_Doctype_Tag
   {
     nextChar();
-    if(currentChar=='/')
+    if(currentChar=='/')  //mozliwy token: Open_End_Tag
     {
       token = new Token(Open_End_Tag);
       tokens.push_back(token);
       return token;
     }
-    else if(currentChar=='!')
+    else if(currentChar=='!') //mozliwe tokeny: Open_Comment_Tag, Open_Doctype_Tag
     {
       previousPosition=currentPosition;
       text="";
@@ -65,14 +72,14 @@ Token* Scanner::nextSymbol(){
         nextChar();
         text+=currentChar;
       }
-      if(text.compare(0,2,"--")==0)
+      if(text.compare(0,2,"--")==0) //mozliwy token: Open_Comment_Tag
       {
         currentPosition = previousPosition + 2;
         token = new Token(Open_Commment_Tag);
         tokens.push_back(token);
         return token;
       }
-      else if(text.compare("DOCTYPE")==0)
+      else if(text.compare("DOCTYPE")==0) //mozliwy token: Open_Doctype_Tag
       {
         currentPosition=previousPosition + 7;
         token = new Token(Open_Doctype_Tag);
@@ -84,7 +91,7 @@ Token* Scanner::nextSymbol(){
         return NULL;
       }
     }
-    else
+    else  //mozliwy token: Open_Start_Tag
     {
       currentPosition--;
       token = new Token(Open_Start_Tag);
@@ -92,16 +99,16 @@ Token* Scanner::nextSymbol(){
       return token;
     }
   }
-  if(currentChar=='>')
+  if(currentChar=='>')  //mozliwy token: Close_Tag
   {
     token = new Token(Close_Tag);
     tokens.push_back(token);
     return token;
   }
-  if(currentChar=='/')
+  if(currentChar=='/')  //mozliwy token: Close_Self_Closing_Tag
   {
     nextChar();
-    if(currentChar=='>')
+    if(currentChar=='>')  //mozliwy token: Close_Self_Closing_Tag
     {
       token = new Token(Close_Self_Closing_Tag);
       tokens.push_back(token);
@@ -112,7 +119,7 @@ Token* Scanner::nextSymbol(){
       currentPosition--;
     }
   }
-  if(currentChar=='=')
+  if(currentChar=='=')  //mozliwy token: Equals_Sign
   {
     if(!isText())
     {
@@ -121,13 +128,13 @@ Token* Scanner::nextSymbol(){
       return token;
     }
   }
-  if(currentChar=='-')
+  if(currentChar=='-')  //mozliwy token: Close_Comment_Tag
   {
     nextChar();
-    if(currentChar=='-')
+    if(currentChar=='-')  //mozliwy token: Close_Comment_Tag
     {
       nextChar();
-      if(currentChar=='>')
+      if(currentChar=='>')  //mozliwy token: Close_Comment_Tag
       {
         token = new Token(Close_Comment_Tag);
         tokens.push_back(token);
@@ -145,6 +152,7 @@ Token* Scanner::nextSymbol(){
       currentPosition--;
     }
   }
+  //mozliwy token: Text
   text=currentChar;
   nextChar();
   while(isText())
@@ -158,6 +166,7 @@ Token* Scanner::nextSymbol(){
   return token;
 }
 
+//funkcja sprawdzajaca czy aktualny znak jest tekstem
 bool Scanner::isText(){
   switch(currentChar)
   {
@@ -169,11 +178,11 @@ bool Scanner::isText(){
     {
       int i=0;
       nextChar();
-      while(isspace(currentChar)){
+      while(isspace(currentChar)){  //wyczyszczenie bialych znakow
         nextChar();
         i++;
       }
-      if(currentChar!='"')
+      if(currentChar!='"')  //sprawdzenie czy znak '=' nie jest tokenem: Equals_Sign
       {
         currentPosition=currentPosition-i-1;
         currentChar='=';
@@ -186,7 +195,7 @@ bool Scanner::isText(){
         return false;
       }
     }
-    case '/':
+    case '/': //sprawdzenie czy nie pojawil sie token : Close_Self_Closing_Tag: '/>'
     {
       nextChar();
       if(currentChar=='>')
@@ -201,7 +210,7 @@ bool Scanner::isText(){
         return true;
       }
     }
-    case '-':
+    case '-': //sprawdzenie czy nie pojawil sie token : Close_Comment_Tag: '-->'
     {
       nextChar();
       if(currentChar=='-')
@@ -234,8 +243,9 @@ bool Scanner::isText(){
   }
 }
 
+//funkcja sprawdzajaca czy aktualny znak jest wartoscia
 bool Scanner::isValue(){
-  if(currentChar=='\\')
+  if(currentChar=='\\') //sprawdznie czy nie pojawil sie znak '\"' oznaczajacy cudzyslow z tokenie: Value
   {
     nextChar();
     if(currentChar=='"')
@@ -248,7 +258,7 @@ bool Scanner::isValue(){
       return true;
     }
   }
-  else if(currentChar!='"')
+  else if(currentChar!='"') //sprawdzenie czy nie konczy sie token: Value znakiem '"'
   {
     return true;
   }

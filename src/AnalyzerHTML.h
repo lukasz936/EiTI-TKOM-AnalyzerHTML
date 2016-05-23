@@ -8,6 +8,7 @@
 #include "codeGenerator/CodeGenerator.h"
 #include "fileCreator/FileCreator.h"
 
+
 class AnalyzerHTML{
   Error error;
 public:

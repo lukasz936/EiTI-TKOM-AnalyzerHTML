@@ -2,6 +2,19 @@
 
 using namespace std;
 
+//Productions:
+//1. html ::= [doctype]  element
+//2. doctype ::= Open_Doctype_Tag  [{text}]  [{value}]  Close_Tag
+//3. element ::= start_tag   [ {element} ]   end_tag
+//4. element ::= self_closing_tag
+//5. element ::= [{text | value}]
+//6. start_tag ::= open_start_tag   text   [ {attribute} ]   close_tag
+//7. end_tag ::= open_end_tag   text   close_tag
+//8. self_closing_tag ::= open_start_tag   tag_name [{attribute}] close_self_closing_tag
+//9. attribute ::= text   equals_sign   value
+
+
+
 Parser::Parser(Scanner* scanner)
 {
   this->scanner=scanner;
@@ -13,12 +26,14 @@ Parser::~Parser()
   delete this->html;
 }
 
+//glowna funkcja parsera
 void Parser::start()
 {
   this->html = parseHtml();
 
 }
 
+//funkcja parsujaca obiekt typu Html (produkcja nr 1)
 Html* Parser::parseHtml()
 {
   Token* token;
@@ -28,6 +43,7 @@ Html* Parser::parseHtml()
   vector<string> values;
   if((token=scanner->nextSymbol())==NULL)
   return NULL;
+  //mozliwa produkcja nr 2
   if(token->getTokenType()==Open_Doctype_Tag)
   {
     token=scanner->nextSymbol();
@@ -58,6 +74,7 @@ Html* Parser::parseHtml()
       return NULL;
     }
   }
+  //mozliwa produkcja nr 3
   if((element=parseElement())!=NULL)
   {
     return new Html(doctype,element);
@@ -71,6 +88,7 @@ Html* Parser::parseHtml()
   return NULL;
 }
 
+//funkcja parsujaca obiekt typu HtmlElement
 HtmlElement* Parser::parseElement()
 {
   Token* token = tokens->at(tokens->size()-1);
@@ -82,10 +100,13 @@ HtmlElement* Parser::parseElement()
   HtmlAttribute* attribute;
   if(token==NULL)
   return NULL;
+  //mozliwe produkcje: 3,4
+  //mozliwa produkcja: 6
   if(token->getTokenType()==Open_Start_Tag)
   {
+
     token=scanner->nextSymbol();
-    if(token!=NULL && token->getTokenType()==Text)//start_tag lub self_closing_tag
+    if(token!=NULL && token->getTokenType()==Text)
     {
       name=token->getContent();
       token=scanner->nextSymbol();
@@ -94,12 +115,14 @@ HtmlElement* Parser::parseElement()
         attributes.push_back(attribute);
       }
       token = tokens->at(tokens->size()-1);
+      //mozliwa produkcja: 4
       if(token!=NULL && token->getTokenType()==Close_Self_Closing_Tag)
       {
         scanner->nextSymbol();
         return new HtmlElement(name,attributes,"","",elements);
       }
-      else if(token!=NULL && token->getTokenType()==Close_Tag)  //koniec start_tag.
+      //mozliwa produkcja: 3
+      else if(token!=NULL && token->getTokenType()==Close_Tag)
       {
         token=scanner->nextSymbol();
         while((element= parseElement())!=NULL)
@@ -107,7 +130,8 @@ HtmlElement* Parser::parseElement()
           elements.push_back(element);
         }
         token = tokens->at(tokens->size()-1);
-        if(token!=NULL && token->getTokenType()==Open_End_Tag)  //end tag
+        //mozliwa produkcja: 7
+        if(token!=NULL && token->getTokenType()==Open_End_Tag)
         {
           token=scanner->nextSymbol();
           if(token==NULL || token->getTokenType()!=Text)
@@ -124,6 +148,7 @@ HtmlElement* Parser::parseElement()
       }
     }
   }
+  //mozliwa produkcja nr 5
   else if(token->getTokenType()==Text || token->getTokenType()==Value)
   {
     if(token->getTokenType()==Value)
@@ -140,12 +165,13 @@ HtmlElement* Parser::parseElement()
 
   if(text.at(text.size()-1)==' ')
     text.erase(text.end()-1,text.end());
-    return new HtmlElement(name,attributes,text,"",elements);
+  return new HtmlElement(name,attributes,text,"",elements);
   }
 
   return NULL;
 }
 
+//funkcja parsujaca obiekt typu HtmlAttribute (produkcja nr 9)
 HtmlAttribute* Parser::parseAttribute()
 {
   Token* token = tokens->at(tokens->size()-1);
@@ -176,6 +202,7 @@ Html* Parser::getHtml()
   return this->html;
 }
 
+//funkcja wyszukujaca rekurencyjnie Element ( o podanych parametrach: nazwa elementu, opcjonalnie nazwa atrybutu i jego wartosc) zaczynajac poszukiwania od zadanego elementu startElement
 vector<HtmlElement*> Parser::searchElements(HtmlElement* startElement, string name, string attributeName, string attributeValue)
 {
   vector<HtmlElement*> htmlElements;
@@ -207,28 +234,4 @@ vector<HtmlElement*> Parser::searchElements(HtmlElement* startElement, string na
       }
   }
   return htmlElements;
-}
-
-void Parser::displaySymbol(Token* token)
-{
-  if(token->getTokenType()==Open_Start_Tag)
-  cout<<"1. Open_Start_Tag"<<endl;
-  else if(token->getTokenType()==Close_Tag)
-  cout<<"2. Close_Tag"<<endl;
-  else if(token->getTokenType()==Open_End_Tag)
-  cout<<"3. Open_End_Tag"<<endl;
-  else if(token->getTokenType()==Close_Self_Closing_Tag)
-  cout<<"4. Close_Self_Closing_Tag"<<endl;
-  else if(token->getTokenType()==Equals_Sign)
-  cout<<"5. Equals_Sign"<<endl;
-  else if(token->getTokenType()==Open_Doctype_Tag)
-  cout<<"6. Open_Doctype_Tag"<<endl;
-  else if(token->getTokenType()==Open_Commment_Tag)
-  cout<<"7. Open_Commment_Tag"<<endl;
-  else if(token->getTokenType()==Close_Comment_Tag)
-  cout<<"8. Close_Comment_Tag"<<endl;
-  else if(token->getTokenType()==Value)
-  cout<<"9. Value: " << token->getContent()<<endl;
-  else if(token->getTokenType()==Text)
-  cout<<"10. Text: " << token->getContent()<<endl;
 }

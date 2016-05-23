@@ -13,6 +13,7 @@ FileCreator::~FileCreator()
 
 }
 
+//glowna funkcja modulu obslugi wyjscia zapisujaca plik w formacie JSON
 void FileCreator::start(string stringJSON)
 {
     ofstream ofs;

@@ -6,6 +6,7 @@
 using namespace std;
 void display(vector<Token*>*);
 
+//glowna funkcja przeprowadzajace analize pliku html
 AnalyzerHTML::AnalyzerHTML(int argc, char** argv){
   if(argc<2)
   {
@@ -18,13 +19,11 @@ AnalyzerHTML::AnalyzerHTML(int argc, char** argv){
   Scanner scanner(fileReader.start(argv[1]));
   Parser parser(&scanner);
   parser.start();
-  codeGenerator.start(&parser);
+  if(argc==3)
+    codeGenerator.start(&parser,argv[2]);
+  else
+    codeGenerator.start(&parser,NULL);
   fileCreator.start(codeGenerator.getStringJSON());
-  //while(scanner->nextSymbol()!=NULL);
-  //display(scanner->getPointerOnTokens());
-  //cout<<scanner->getPointerOnTokens()->size();
-
-
 }
 
 void display(vector<Token*>* tokens)
@@ -51,6 +50,5 @@ void display(vector<Token*>* tokens)
     cout<<"9. Value: " << tokens->at(i)->getContent()<<endl;
     else if(tokens->at(i)->getTokenType()==Text)
     cout<<"10. Text: " << tokens->at(i)->getContent()<<endl;
-
   }
 }
