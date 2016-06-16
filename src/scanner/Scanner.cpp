@@ -87,7 +87,7 @@ Token* Scanner::nextSymbol(){
         return token;
       }
       else{
-        error.show(SCANNER_INVALID_SIGN);
+        cout<<"Error in Scanner. Invalid sign."<<endl;
         return NULL;
       }
     }
@@ -142,7 +142,7 @@ Token* Scanner::nextSymbol(){
       }
       else
       {
-        error.show(SCANNER_INVALID_SIGN);
+        cout<<"Error in Scanner. Invalid sign."<<endl;
         return NULL;
       }
     }

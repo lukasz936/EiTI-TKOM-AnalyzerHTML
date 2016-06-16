@@ -70,7 +70,7 @@ Html* Parser::parseHtml()
     }
     else
     {
-      error.show(PARSER_INVALID_TOKEN_HTML);
+      cout<<"Error in Parser. Unexpected token in Html. Expected: Close_Tag"<<endl;
       return NULL;
     }
   }
@@ -81,10 +81,10 @@ Html* Parser::parseHtml()
   }
   else
   {
-    error.show(PARSER_INVALID_TOKEN_HTML);
+    cout<<"Error in Parser. Unexpected token in Html. Expected: Open_Start_Tag"<<endl;
     return NULL;
   }
-  error.show(PARSER_INVALID_TOKEN_HTML);
+  cout<<"Error in Parser. Unexpected token in Html. Expected: Open_Start_Tag"<<endl;
   return NULL;
 }
 
@@ -104,7 +104,6 @@ HtmlElement* Parser::parseElement()
   //mozliwa produkcja: 6
   if(token->getTokenType()==Open_Start_Tag)
   {
-
     token=scanner->nextSymbol();
     if(token!=NULL && token->getTokenType()==Text)
     {
@@ -142,32 +141,37 @@ HtmlElement* Parser::parseElement()
             scanner->nextSymbol();
             return new HtmlElement(name,attributes,text,"",elements);
           }
+          cout<<"Error in Parser. Unexpected token in HtmlElement. Expected: Open_Start_Tag"<<endl;
+          return NULL;
         }
-        else
+        cout<<"Error in Parser. Unexpected token in HtmlElement. Expected: Open_End_Tag"<<endl;
         return NULL;
       }
+      cout<<"Error in Parser. Unexpected token in HtmlElement. Expected: Close_Tag"<<endl;
+      return NULL;
     }
+    cout<<"Error in Parser. Unexpected token in HtmlElement. Expected: Text"<<endl;
+    return NULL;
   }
   //mozliwa produkcja nr 5
   else if(token->getTokenType()==Text || token->getTokenType()==Value)
   {
     if(token->getTokenType()==Value)
-        text+=("\"" + token->getContent() + "\" ");
-      else
-        text+=(token->getContent()+" ");
+    text+=("\"" + token->getContent() + "\" ");
+    else
+    text+=(token->getContent()+" ");
     while((token=scanner->nextSymbol()) && (token->getTokenType()==Text || token->getTokenType()==Value))
     {
-    if(token->getTokenType()==Value)
-        text+=("\"" + token->getContent() + "\" ");
+      if(token->getTokenType()==Value)
+      text+=("\"" + token->getContent() + "\" ");
       else
-        text+=(token->getContent()+" ");
+      text+=(token->getContent()+" ");
     }
 
-  if(text.at(text.size()-1)==' ')
+    if(text.at(text.size()-1)==' ')
     text.erase(text.end()-1,text.end());
-  return new HtmlElement(name,attributes,text,"",elements);
+    return new HtmlElement(name,attributes,text,"",elements);
   }
-
   return NULL;
 }
 
@@ -192,6 +196,14 @@ HtmlAttribute* Parser::parseAttribute()
         scanner->nextSymbol();
         return new HtmlAttribute(name,value);
       }
+      else{
+        cout<<"Error in Parser. Unexpected token in HtmlAttribute. Expected: Value"<<endl;
+        return NULL;
+      }
+    }
+    else{
+      cout<<"Error in Parser. Unexpected token in HtmlAttribute. Expected: Equals_Sign"<<endl;
+      return NULL;
     }
   }
   return NULL;
@@ -228,10 +240,10 @@ vector<HtmlElement*> Parser::searchElements(HtmlElement* startElement, string na
   for(int i=0;i<startElement->getElements().size();i++)
   {
     tmpElements=searchElements(startElement->getElements().at(i),name,attributeName,attributeValue);
-      for(int j=0;j<tmpElements.size();j++)
-      {
-          htmlElements.push_back(tmpElements.at(j));
-      }
+    for(int j=0;j<tmpElements.size();j++)
+    {
+      htmlElements.push_back(tmpElements.at(j));
+    }
   }
   return htmlElements;
 }

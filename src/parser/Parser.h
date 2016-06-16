@@ -6,7 +6,6 @@
 #include "../htmlStructures/Html.h"
 #include <vector>
 class Parser{
-  Error error;
   Scanner* scanner;
   std::vector<Token*>* tokens;
   Html* html;

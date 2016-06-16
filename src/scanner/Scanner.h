@@ -2,13 +2,11 @@
 #define SCANNER_H
 
 #include "../tokens/Token.h"
-#include "../errors/Error.h"
 #include <iostream>
 #include <vector>
 #define MAXLENGTH 7
 
 class Scanner{
-  Error error;
   std::vector<Token*> tokens;
   std::string inputSource;
   int currentPosition;

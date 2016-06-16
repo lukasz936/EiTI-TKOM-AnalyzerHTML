@@ -2,15 +2,16 @@
 
 #include <string>
 #include <vector>
+#include <string.h>
 
 using namespace std;
 void display(vector<Token*>*);
 
 //glowna funkcja przeprowadzajace analize pliku html
 AnalyzerHTML::AnalyzerHTML(int argc, char** argv){
-  if(argc<2)
+  if(argc<2 || argc ==3 ||argc ==5 ||argc>6)
   {
-    error.show(ANALYZER_WRONG_AGRUMENTS);
+    cout<<"Error. Cannot to start a program. Invalid number of input arguments."<<endl;
     return;
   }
   FileReader fileReader;
@@ -19,36 +20,30 @@ AnalyzerHTML::AnalyzerHTML(int argc, char** argv){
   Scanner scanner(fileReader.start(argv[1]));
   Parser parser(&scanner);
   parser.start();
-  if(argc==3)
-    codeGenerator.start(&parser,argv[2]);
-  else
-    codeGenerator.start(&parser,NULL);
+  startGenerateCode(argc, argv, &parser, &codeGenerator);
   fileCreator.start(codeGenerator.getStringJSON());
 }
 
-void display(vector<Token*>* tokens)
+void AnalyzerHTML::startGenerateCode(int argc, char** argv, Parser* parser, CodeGenerator* codeGenerator)
 {
-  for(int i=0;i<tokens->size();i++)
+  if(argc==2)
+    codeGenerator->start(parser,NULL,NULL);
+  else if(argc==4)
   {
-    if(tokens->at(i)->getTokenType()==Open_Start_Tag)
-    cout<<"1. Open_Start_Tag"<<endl;
-    else if(tokens->at(i)->getTokenType()==Close_Tag)
-    cout<<"2. Close_Tag"<<endl;
-    else if(tokens->at(i)->getTokenType()==Open_End_Tag)
-    cout<<"3. Open_End_Tag"<<endl;
-    else if(tokens->at(i)->getTokenType()==Close_Self_Closing_Tag)
-    cout<<"4. Close_Self_Closing_Tag"<<endl;
-    else if(tokens->at(i)->getTokenType()==Equals_Sign)
-    cout<<"5. Equals_Sign"<<endl;
-    else if(tokens->at(i)->getTokenType()==Open_Doctype_Tag)
-    cout<<"6. Open_Doctype_Tag"<<endl;
-    else if(tokens->at(i)->getTokenType()==Open_Commment_Tag)
-    cout<<"7. Open_Commment_Tag"<<endl;
-    else if(tokens->at(i)->getTokenType()==Close_Comment_Tag)
-    cout<<"8. Close_Comment_Tag"<<endl;
-    else if(tokens->at(i)->getTokenType()==Value)
-    cout<<"9. Value: " << tokens->at(i)->getContent()<<endl;
-    else if(tokens->at(i)->getTokenType()==Text)
-    cout<<"10. Text: " << tokens->at(i)->getContent()<<endl;
+    if(strcmp(argv[2],"-threat")==0)
+      codeGenerator->start(parser,argv[3],NULL);
+    else if(strcmp(argv[2],"-malware")==0)
+      codeGenerator->start(parser,NULL,argv[3]);
+    else
+      cout<<"Error. Cannot to start a program. Invalid type of input arguments."<<endl;
+  }
+  else
+  {
+    if(strcmp(argv[2],"-threat")==0 && strcmp(argv[4],"-malware")==0)
+      codeGenerator->start(parser,argv[3],argv[5]);
+    else if(strcmp(argv[2],"-malware")==0 && strcmp(argv[4],"-threat")==0)
+      codeGenerator->start(parser,argv[5],argv[3]);
+    else
+      cout<<"Error. Cannot to start a program. Invalid type of input arguments."<<endl;
   }
 }

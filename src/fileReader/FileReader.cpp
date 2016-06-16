@@ -27,10 +27,10 @@ string FileReader::start(char* fileDirectory){
     file.close();
     if(inputSource.size()==0)
     {
-      error.show(FILE_READER_EMPTY_FILE);
+      cout<<"Error in File Reader. No sign in file."<<endl;
     }
   }
-  else error.show(FILE_READER_UNABLE_TO_OPEN);
+  else   cout<<"Error in File Reader. Cannot open file or file does not exist."<<endl;
 
   return inputSource;
 }
